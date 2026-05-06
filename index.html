@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Mensagem Final – Formadores em Ação</title>
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #efe9ff;
+        margin: 0;
+        padding: 40px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+
+    h1 {
+        color: #4a148c;
+        font-size: 36px;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+
+    p {
+        color: #4a148c;
+        font-size: 20px;
+        text-align: center;
+        max-width: 900px;
+    }
+
+    /* LADO A LADO */
+    .container {
+        display: flex;
+        justify-content: center;
+        align-items: flex-start;
+        gap: 40px;
+        margin-top: 40px;
+        flex-wrap: wrap;
+    }
+
+    /* RASPADINHA */
+    #scratchArea {
+        width: 600px;
+        height: 500px;
+        position: relative;
+        border: 3px solid #4a148c;
+        border-radius: 12px;
+        overflow: hidden;
+        background: white;
+    }
+
+    #message {
+        padding: 30px;
+        font-size: 20px;
+        color: #4a148c;
+        font-weight: bold;
+        text-align: justify;
+        line-height: 1.5;
+    }
+
+    canvas {
+        position: absolute;
+        top: 0;
+        left: 0;
+    }
+
+    #reset {
+        margin-top: 15px;
+        padding: 12px 24px;
+        background: #4a148c;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        font-size: 18px;
+    }
+
+    #reset:hover {
+        background: #6a1b9a;
+    }
+
+    /* CARROSSEL AUTOMÁTICO */
+    .carousel-box {
+        width: 600px;
+        height: 500px;
+        border: 3px solid #4a148c;
+        border-radius: 12px;
+        overflow: hidden;
+        background: #000; /* fundo para fotos com barras */
+        position: relative;
+    }
+
+    .carousel-track {
+        display: flex;
+        width: 100%;
+        height: 100%;
+        transition: transform 1s ease-in-out;
+    }
+
+    .carousel-slide {
+        min-width: 100%;
+        height: 100%;
+        background: #000;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .carousel-slide img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain; /* MOSTRA A FOTO INTEIRA */
+        background: #000;
+    }
+
+    /* RESPONSIVIDADE */
+    @media (max-width: 1400px) {
+        .container {
+            flex-direction: column;
+            align-items: center;
+        }
+    }
+</style>
+</head>
+
+<body>
+
+<h1>Formadores em Ação – Literatura e Sociedade</h1>
+<p>Passe o mouse (ou o dedo) para revelar a mensagem final.</p>
+
+<div class="container">
+
+    <!-- RASPADINHA -->
+    <div>
+        <div id="scratchArea">
+            <div id="message">
+                Chegamos ao fim de nossos estudos com uma certeza: a identidade é um espelho que reflete a sociedade.<br><br>
+
+                Neste projeto integrador, vimos que entender a si mesmo exige olhar para o outro. A literatura nos permitiu calçar os sapatos de diferentes identidades, enquanto a sociologia e a filosofia nos deram as ferramentas para entender os fios que tecem essa rede.<br><br>
+
+                Encerrar este ciclo é celebrar a diversidade de vozes que compõem quem somos. Obrigado por compartilharem suas identidades e saberes nesta caminhada!
+            </div>
+
+            <canvas id="cover"></canvas>
+        </div>
+
+        <button id="reset">Cobrir novamente</button>
+    </div>
+
+    <!-- CARROSSEL AUTOMÁTICO -->
+    <div class="carousel-box">
+        <div class="carousel-track" id="carouselTrack">
+            <div class="carousel-slide"><img src="WhatsApp Image 2026-04-08 at 14.59.11.jpeg"></div>
+            <div class="carousel-slide"><img src="WhatsApp Image 2026-04-15 at 14.59.37.jpeg"></div>
+            <div class="carousel-slide"><img src="WhatsApp Image 2026-05-06 at 00.03.40.jpeg"></div>
+            <div class="carousel-slide"><img src="WhatsApp Image 2026-05-06 at 00.03.41 (1).jpeg"></div>
+            <div class="carousel-slide"><img src="WhatsApp Image 2026-05-06 at 00.03.41 (2).jpeg"></div>
+            <div class="carousel-slide"><img src="WhatsApp Image 2026-05-06 at 00.03.41 (3).jpeg"></div>
+            <div class="carousel-slide"><img src="WhatsApp Image 2026-05-06 at 00.03.41.jpeg"></div>
+        </div>
+    </div>
+
+</div>
+
+<script>
+    /* RASPADINHA */
+    const canvas = document.getElementById("cover");
+    const ctx = canvas.getContext("2d");
+    const area = document.getElementById("scratchArea");
+
+    canvas.width = area.clientWidth;
+    canvas.height = area.clientHeight;
+
+    function coverCanvas() {
+        ctx.globalCompositeOperation = "source-over";
+        ctx.fillStyle = "#b39ddb";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    coverCanvas();
+
+    let scratching = false;
+
+    function getPos(e) {
+        const rect = canvas.getBoundingClientRect();
+        const x = (e.touches ? e.touches[0].clientX : e.clientX) - rect.left;
+        const y = (e.touches ? e.touches[0].clientY : e.clientY) - rect.top;
+        return { x, y };
+    }
+
+    function scratch(e) {
+        if (!scratching) return;
+        const pos = getPos(e);
+        ctx.globalCompositeOperation = "destination-out";
+        ctx.beginPath();
+        ctx.arc(pos.x, pos.y, 40, 0, Math.PI * 2);
+        ctx.fill();
+    }
+
+    canvas.addEventListener("mousedown", () => scratching = true);
+    canvas.addEventListener("mouseup", () => scratching = false);
+    canvas.addEventListener("mousemove", scratch);
+
+    canvas.addEventListener("touchstart", () => scratching = true);
+    canvas.addEventListener("touchend", () => scratching = false);
+    canvas.addEventListener("touchmove", scratch);
+
+    document.getElementById("reset").addEventListener("click", coverCanvas);
+
+    /* CARROSSEL AUTOMÁTICO */
+    const track = document.getElementById("carouselTrack");
+    const slides = document.querySelectorAll(".carousel-slide");
+    let index = 0;
+
+    function autoSlide() {
+        index = (index + 1) % slides.length;
+        track.style.transform = `translateX(-${index * 100}%)`;
+    }
+
+    setInterval(autoSlide, 3000); // troca a cada 3 segundos
+</script>
+
+</body>
+</html>
